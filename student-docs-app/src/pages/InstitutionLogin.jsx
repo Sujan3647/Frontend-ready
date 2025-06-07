@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
 export default function InstitutionLogin() {
   const navigate = useNavigate();
@@ -15,9 +16,10 @@ export default function InstitutionLogin() {
 
   const handleLogin = (e) => {
     e.preventDefault();
+
     const stored = localStorage.getItem(`institution-${formData.institutionNo}`);
     if (!stored) {
-      alert('Institution not found.');
+      alert('❌ Institution not found.');
       return;
     }
 
@@ -27,49 +29,54 @@ export default function InstitutionLogin() {
       institution.blockId === formData.blockId
     ) {
       localStorage.setItem('currentInstitution', JSON.stringify(institution));
+      alert('✅ Login successful!');
       navigate('/institution/dashboard');
     } else {
-      alert('Invalid credentials.');
+      alert('❌ Invalid credentials. Please check your name and Block ID.');
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 to-blue-300 px-4">
-      <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md">
-        <h2 className="text-3xl font-bold text-blue-800 text-center mb-6">Institution Login</h2>
-        <form onSubmit={handleLogin} className="space-y-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-tr from-blue-100 to-purple-200 px-4">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md"
+      >
+        <h2 className="text-3xl font-extrabold text-blue-700 text-center mb-6">🏛 Institution Login</h2>
+        <form onSubmit={handleLogin} className="space-y-5">
           <input
             name="name"
-            onChange={handleChange}
             value={formData.name}
-            placeholder="Institution Name"
-            className="w-full border border-blue-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            onChange={handleChange}
+            placeholder="🏢 Institution Name"
+            className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
           />
           <input
             name="institutionNo"
-            onChange={handleChange}
             value={formData.institutionNo}
-            placeholder="Institution Number"
-            className="w-full border border-blue-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            onChange={handleChange}
+            placeholder="🔢 Institution Number"
+            className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
           />
           <input
             name="blockId"
-            onChange={handleChange}
             value={formData.blockId}
-            placeholder="Institution Block ID"
-            className="w-full border border-blue-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            onChange={handleChange}
+            placeholder="🔐 Block ID"
+            className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
           />
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
+            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-xl font-semibold text-lg hover:shadow-lg transition-all"
           >
-            Login
+            🚀 Login
           </button>
         </form>
-      </div>
+      </motion.div>
     </div>
   );
 }
