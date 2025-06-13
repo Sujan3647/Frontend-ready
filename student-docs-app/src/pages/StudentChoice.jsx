@@ -1,29 +1,61 @@
 // src/pages/StudentChoice.jsx
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
 export default function StudentChoice() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-100 to-blue-300 px-4">
-      <h2 className="text-3xl font-bold text-blue-900 mb-6">Student Access</h2>
-      <p className="text-lg text-blue-800 mb-8 text-center max-w-xl">
-        Choose whether to create a new student account or log in to your dashboard.
-      </p>
-      <div className="flex flex-col md:flex-row gap-6">
-        <button
-          onClick={() => navigate('/student/signup')}
-          className="bg-white text-blue-800 border border-blue-600 px-8 py-3 rounded-xl font-semibold shadow-lg hover:bg-blue-600 hover:text-white transition duration-300"
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 to-blue-300 px-6 py-12">
+      <motion.div
+        className="backdrop-blur-lg bg-white/30 border border-blue-200 rounded-3xl shadow-2xl p-10 max-w-2xl w-full text-center"
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.6, ease: 'easeOut' }}
+      >
+        <motion.h2
+          className="text-4xl sm:text-5xl font-extrabold text-blue-900 mb-4"
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.2 }}
         >
-          Signup
-        </button>
-        <button
-          onClick={() => navigate('/student/login')}
-          className="bg-white text-blue-800 border border-blue-600 px-8 py-3 rounded-xl font-semibold shadow-lg hover:bg-blue-600 hover:text-white transition duration-300"
+          Student Access
+        </motion.h2>
+
+        <motion.p
+          className="text-blue-800 text-base sm:text-lg md:text-xl mb-8"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4 }}
         >
-          Login
-        </button>
-      </div>
+          Choose an option to get started with your EduVerify account.
+        </motion.p>
+
+        <motion.div
+          className="flex flex-col sm:flex-row justify-center items-center gap-6"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+        >
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => navigate('/student/signup')}
+            className="bg-white/80 text-blue-800 border border-blue-600 px-8 py-3 rounded-2xl font-semibold shadow-lg hover:bg-blue-600 hover:text-white transition-all duration-300"
+          >
+            Create New Account
+          </motion.button>
+
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => navigate('/student/login')}
+            className="bg-white/80 text-blue-800 border border-blue-600 px-8 py-3 rounded-2xl font-semibold shadow-lg hover:bg-blue-600 hover:text-white transition-all duration-300"
+          >
+            Log In
+          </motion.button>
+        </motion.div>
+      </motion.div>
     </div>
   );
 }

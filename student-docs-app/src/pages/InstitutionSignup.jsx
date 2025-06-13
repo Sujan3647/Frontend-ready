@@ -36,45 +36,86 @@ export default function InstitutionSignup() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-tr from-blue-50 to-purple-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-tr from-blue-100 to-indigo-200 flex items-center justify-center px-4 py-10">
       <motion.div
-        initial={{ opacity: 0, y: -40 }}
+        initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md"
+        transition={{ duration: 0.6, ease: 'easeOut' }}
+        className="bg-white shadow-2xl rounded-3xl w-full max-w-md p-8 md:p-10"
       >
-        <h2 className="text-3xl font-bold text-blue-700 text-center mb-6">🏫 Institution Signup</h2>
+        <h2 className="text-3xl md:text-4xl font-extrabold text-center text-indigo-700 mb-8">
+          🏫 Institution Signup
+        </h2>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <input
-            name="name"
-            onChange={handleChange}
-            placeholder="🏢 Institution Name"
-            className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          />
-          <input
-            name="institutionNo"
-            onChange={handleChange}
-            placeholder="🔢 Institution Number"
-            className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          />
-          <input
-            name="secretId"
-            onChange={handleChange}
-            placeholder="🔐 Secret ID"
-            type="password"
-            className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          />
-
-          <button
-            type="submit"
-            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-xl font-semibold text-lg hover:shadow-lg transition-all"
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.1 }}
           >
-            🚀 Signup
-          </button>
+            <label className="block text-sm font-medium text-gray-600 mb-1">Institution Name</label>
+            <input
+              name="name"
+              value={institution.name}
+              onChange={handleChange}
+              placeholder="e.g. Global University"
+              className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none transition"
+              required
+            />
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            <label className="block text-sm font-medium text-gray-600 mb-1">Institution Number</label>
+            <input
+              name="institutionNo"
+              value={institution.institutionNo}
+              onChange={handleChange}
+              placeholder="e.g. INST1234"
+              className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none transition"
+              required
+            />
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            <label className="block text-sm font-medium text-gray-600 mb-1">Secret ID</label>
+            <input
+              type="password"
+              name="secretId"
+              value={institution.secretId}
+              onChange={handleChange}
+              placeholder="Enter a secret key"
+              className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none transition"
+              required
+            />
+          </motion.div>
+
+          <motion.button
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+            type="submit"
+            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl font-semibold text-lg shadow-lg transition-all"
+          >
+            🚀 Create Account
+          </motion.button>
         </form>
+
+        <p className="text-sm text-center text-gray-500 mt-6">
+          Already have an account?{' '}
+          <span
+            onClick={() => navigate('/institution/login')}
+            className="text-indigo-600 hover:underline cursor-pointer"
+          >
+            Log in
+          </span>
+        </p>
       </motion.div>
     </div>
   );

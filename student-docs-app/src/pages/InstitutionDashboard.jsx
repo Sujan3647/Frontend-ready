@@ -1,12 +1,10 @@
-// src/pages/InstitutionDashboard.jsx
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { uploadFileToIPFS } from "../utils/uploadToIPFS";
 import { ethers } from "ethers";
 import FileStore from "../abi/FileStore.json";
 
-const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3"; // ✅ Confirm this matches deployment
+const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 
 export default function InstitutionDashboard() {
   const [formData, setFormData] = useState({
@@ -16,8 +14,17 @@ export default function InstitutionDashboard() {
     documentTitle: "",
     documentFile: null,
   });
+
   const [message, setMessage] = useState("");
   const [preview, setPreview] = useState(null);
+  const [institution, setInstitution] = useState(null);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("currentInstitution");
+    if (stored) {
+      setInstitution(JSON.parse(stored));
+    }
+  }, []);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -32,12 +39,8 @@ export default function InstitutionDashboard() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.documentFile) {
-      alert("Please select a file.");
-      return;
-    }
-    if (!formData.studentBlockId) {
-      alert("Please enter Student Block ID.");
+    if (!formData.documentFile || !formData.studentBlockId) {
+      alert("Please fill all fields and select a file.");
       return;
     }
 
@@ -50,6 +53,7 @@ export default function InstitutionDashboard() {
         return;
       }
       await window.ethereum.request({ method: "eth_requestAccounts" });
+
       const provider = new ethers.BrowserProvider(window.ethereum);
       const signer = await provider.getSigner();
       const contract = new ethers.Contract(contractAddress, FileStore.abi, signer);
@@ -58,10 +62,10 @@ export default function InstitutionDashboard() {
       const tx = await contract.uploadFile(ipfsHash, formData.studentBlockId);
       await tx.wait();
 
-      setMessage("✅ Successfully uploaded!");
+      setMessage("✅ Document uploaded successfully!");
     } catch (err) {
       console.error("Upload Error:", err);
-      setMessage("❌ Upload failed — see console.");
+      setMessage("❌ Upload failed. See console.");
     } finally {
       setFormData({
         studentName: "",
@@ -76,25 +80,48 @@ export default function InstitutionDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-tr from-blue-50 to-purple-100 p-6 flex flex-col items-center">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100 flex flex-col items-center p-6 md:p-10">
+      {/* Institution Info Card */}
+      {institution && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="bg-white w-full max-w-3xl mb-8 p-6 rounded-2xl shadow-lg border"
+        >
+          <h3 className="text-xl md:text-2xl font-bold text-indigo-700 mb-2">🏛 Institution Info</h3>
+          <p className="text-gray-700">
+            <strong>Name:</strong> {institution.name}
+          </p>
+          <p className="text-gray-700">
+            <strong>Institution Number:</strong> {institution.institutionNo}
+          </p>
+          <p className="text-gray-700">
+            <strong>Block ID:</strong> {institution.blockId}
+          </p>
+        </motion.div>
+      )}
+
+      {/* Upload Form */}
       <motion.div
-        initial={{ opacity: 0, y: -30 }}
+        initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white shadow-xl rounded-2xl w-full max-w-2xl p-8"
+        transition={{ duration: 0.6 }}
+        className="bg-white shadow-2xl rounded-3xl w-full max-w-3xl p-8 md:p-10"
       >
-        <h2 className="text-3xl font-extrabold text-blue-700 mb-6 text-center">
+        <h2 className="text-3xl md:text-4xl font-extrabold text-center text-indigo-700 mb-10">
           📤 Upload Document to Student
         </h2>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <input
               type="text"
               name="studentName"
               value={formData.studentName}
               onChange={handleChange}
               placeholder="👤 Student Name"
-              className="p-3 rounded-lg border"
+              className="p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 outline-none transition"
               required
             />
             <input
@@ -103,7 +130,7 @@ export default function InstitutionDashboard() {
               value={formData.enrollmentId}
               onChange={handleChange}
               placeholder="🆔 Enrollment ID"
-              className="p-3 rounded-lg border"
+              className="p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 outline-none transition"
               required
             />
             <input
@@ -112,7 +139,7 @@ export default function InstitutionDashboard() {
               value={formData.studentBlockId}
               onChange={handleChange}
               placeholder="🔗 Student Block ID"
-              className="p-3 rounded-lg border col-span-1 sm:col-span-2"
+              className="p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 outline-none transition col-span-1 md:col-span-2"
               required
             />
             <input
@@ -121,56 +148,58 @@ export default function InstitutionDashboard() {
               value={formData.documentTitle}
               onChange={handleChange}
               placeholder="📄 Document Title"
-              className="p-3 rounded-lg border col-span-1 sm:col-span-2"
+              className="p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 outline-none transition col-span-1 md:col-span-2"
               required
             />
           </div>
 
           <div className="mt-4">
-            <label className="block mb-2 font-medium text-gray-700">
-              🖼️ Upload File (image or PDF)
-            </label>
+            <label className="block mb-2 font-medium text-gray-700">🖼️ Upload File</label>
             <input
               id="fileInput"
               type="file"
               name="documentFile"
               accept="image/*,.pdf"
               onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded-lg"
+              className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500"
               required
             />
           </div>
 
           {preview && (
-            <div className="mt-4">
-              <div className="text-sm text-gray-500 mb-2">Preview:</div>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-4">
+              <div className="text-sm text-gray-500 mb-2 font-medium">Preview:</div>
               {formData.documentFile?.type.startsWith("image") ? (
-                <img src={preview} alt="Preview" className="max-h-64 rounded shadow border" />
+                <img src={preview} alt="Preview" className="max-h-64 rounded-xl border shadow" />
               ) : (
-                <div className="bg-gray-200 text-gray-700 p-4 rounded shadow">
-                  <strong>PDF file:</strong> {formData.documentFile.name}
+                <div className="bg-gray-200 p-4 rounded-xl shadow text-gray-700">
+                  📄 <strong>{formData.documentFile.name}</strong> (PDF)
                 </div>
               )}
-            </div>
+            </motion.div>
           )}
 
-          <button
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             type="submit"
-            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-xl text-lg font-semibold hover:shadow-lg transition-all"
+            className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 rounded-xl text-lg font-semibold shadow-md hover:shadow-xl transition"
           >
             🚀 Upload Document
-          </button>
+          </motion.button>
         </form>
 
         {message && (
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className={`mt-6 ${
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className={`mt-6 text-center px-4 py-3 rounded-xl shadow-md ${
               message.includes("✅")
-                ? "bg-green-100 border-green-400 text-green-700"
-                : "bg-yellow-100 border-yellow-400 text-yellow-700"
-            } px-4 py-3 rounded-lg text-center`}
+                ? "bg-green-100 text-green-700 border border-green-300"
+                : message.includes("❌")
+                ? "bg-red-100 text-red-700 border border-red-300"
+                : "bg-yellow-100 text-yellow-700 border border-yellow-300"
+            }`}
           >
             {message}
           </motion.div>
